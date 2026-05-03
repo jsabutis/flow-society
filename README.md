@@ -1,36 +1,117 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Flow Society MX
 
-## Getting Started
+E-bike experiences and trail culture in Bosque La Primavera, Jalisco — a marketing + booking site built with Next.js 15, Prisma, and Tailwind. Brunch + Ride + Comunidad: small-group, level-adapted rides with an after-ride lounge, membership program, and two-day camping experience.
 
-First, run the development server:
+## What's in here
+
+- **5 experiences** seeded as Flow Society's offering: La Primavera E-Bike Brunch (Beginner / Intermediate), Brunch & Lounge Pareja Híbrida, Membresía (1 master class + 3 rides per month), and the E-Bike Camping Experience.
+- **6 bikes** in the rental fleet (e-bike-focused: Specialized Turbo Levo SL, Levo Comp, Trek Rail, Giant Trance X E+, plus two analog MTBs for the hybrid couples format).
+- **Per-departure availability calendar** that crosses out sold-out and held dates so customers can't pick them.
+- **Six-step booking flow** (date → trip basics → riders → equipment → logistics → review) with ~12 captured fields including accessory rentals (helmets, gloves, pads, hydration, shoes, GoPro).
+- **Operator dashboard** at `/admin` to confirm/decline bookings, manage departures, and block dates.
+- **Email** via Resend with a console-log fallback for local dev (no account required).
+
+## Tech stack (free-tier only)
+
+- Next.js 15 (App Router) · React 19 · TypeScript
+- Tailwind CSS v4 · shadcn-style UI components · Radix primitives
+- Prisma 6 · SQLite locally / Postgres (Neon free tier) in production
+- react-day-picker · react-hook-form · zod
+- Resend (email; optional, falls back to console)
+- Framer Motion · Lucide icons
+- Hosted on **Vercel Hobby** (free)
+
+Total cost at launch: **$0/mo**. No credit card required for any service.
+
+## Running locally
 
 ```bash
+npm install
+npx prisma migrate dev
+npm run db:seed
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Opens at http://localhost:3000 (or next free port).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The admin dashboard is at `/admin` — sign in with the `ADMIN_TOKEN` from your `.env`. Default in `.env.example`: `changeme-local-dev-token`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Environment variables
 
-## Learn More
+Copy `.env.example` to `.env`:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+DATABASE_URL="file:./dev.db"           # Local SQLite. Swap to Neon Postgres URL in prod.
+ADMIN_TOKEN="changeme-local-dev-token" # Required to access /admin
+RESEND_API_KEY=""                      # Optional. Without it, emails log to console.
+RESEND_FROM="bookings@example.com"
+ADMIN_NOTIFY_EMAIL="you@example.com"   # Where new booking notifications go.
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Useful scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run dev          # Next dev server (Turbopack)
+npm run build        # Production build
+npm run db:seed      # Re-seed tours / bikes / departures
+npm run db:reset     # Drop + re-create the local SQLite DB
+npx tsx scripts/smoke-booking.ts   # End-to-end booking pipeline test
+```
 
-## Deploy on Vercel
+## Deploying to Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Push the repo to GitHub.
+2. In Vercel, import the project. (Build command auto-detects from `vercel-build` in `package.json`.)
+3. Storage → add **Neon** Postgres (free). Vercel injects `DATABASE_URL` automatically.
+4. Edit `prisma/schema.prisma`: change `provider = "sqlite"` to `provider = "postgresql"`. (Schema fields are intentionally portable; this is the only change needed.)
+5. Set env vars in Vercel: `ADMIN_TOKEN`, `RESEND_API_KEY` (optional), `RESEND_FROM`, `ADMIN_NOTIFY_EMAIL`, `SITE_URL`.
+6. Deploy. The `vercel-build` script runs `prisma generate && prisma migrate deploy && next build`.
+7. After first deploy, seed prod: `vercel env pull .env.production` then `DATABASE_URL=... npm run db:seed`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Vercel Hobby ToS note
+
+Hobby is free but technically forbids commercial use. When you start taking real bookings, upgrade to Pro ($20/mo).
+
+## Project layout
+
+```
+prisma/
+  schema.prisma         Tour, TourDeparture, BlockedDate, Bike, BookingRequest
+  seed.ts               Seeds 8 tours, 6 bikes, 6 months of departures
+src/
+  app/
+    page.tsx            Home
+    tours/              Tours listing + detail
+    bikes/              Fleet listing + detail
+    calendar/           Master departure calendar
+    book/[tourSlug]/    Multi-step booking flow + confirmation
+    admin/              Token-gated operator dashboard
+    api/                (Server Actions handle most writes; no REST needed)
+    sitemap.ts          /sitemap.xml
+    robots.ts           /robots.txt
+  components/
+    ui/                 shadcn-style primitives (Button, Input, Calendar, etc.)
+    site/               Header, footer, hero, tour card, bike card, etc.
+    booking/            The multi-step booking flow
+  lib/
+    db.ts               Prisma client singleton
+    availability.ts     Capacity + blocked-date computation
+    booking-schema.ts   Zod schema for the booking form
+    admin.ts            Admin token check + cookie helpers
+    email.ts            Resend wrapper with console fallback
+    utils.ts            cn(), formatUsd(), formatDateRange(), etc.
+    types.ts            DepartureAvailability, Rider, ItineraryDay
+    data/
+      tours.ts          Seed data for 8 tours
+      bikes.ts          Seed data for 6 bikes
+scripts/
+  smoke-booking.ts      End-to-end smoke test for the booking pipeline
+```
+
+## What's intentionally out of scope (for now)
+
+- Real authentication for the admin (uses a single env-var token; swap in [Auth.js](https://authjs.dev) when needed)
+- Payment processing (booking-request workflow only — operator confirms and invoices manually)
+- Spanish/English i18n toggle (drop in `next-intl` when ready)
+- Original photography (currently using Unsplash placeholders, attributed in `/credits`)
+- Custom domain (defaults to free `*.vercel.app`)

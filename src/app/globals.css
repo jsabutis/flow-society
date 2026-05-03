@@ -1,26 +1,222 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Jalisco palette.
+   *
+   * Every value below has been chosen so that text colors meet WCAG 2.1 AA
+   * contrast (≥ 4.5:1 for normal text) against the surfaces they're paired
+   * with in this app. The intended pairings are:
+   *
+   *   On light surfaces (sand-soft / sand / sand-deep / white):
+   *     pine, pine-soft, ink, ink-soft, ink-muted, terracotta,
+   *     terracotta-deep, agave-deep
+   *
+   *   On dark surfaces (pine / pine-soft):
+   *     sand-soft (any opacity ≥ 0.7), white, clay
+   *
+   * The brighter "clay" token exists specifically as an accent text color
+   * for use on dark (pine) backgrounds, where the regular terracotta does
+   * not have enough luminance contrast.
+   *
+   * Note: --color-agave is intentionally only used as a fill (always with
+   * opacity), never as a text color, because it does not pass 4.5:1 on
+   * light backgrounds. For agave-tinted text use --color-agave-deep.
+   */
+  --color-sand: #f4ede1;
+  --color-sand-soft: #faf6ee;
+  --color-sand-deep: #e6dcc7;
+  --color-terracotta: #a8451f;
+  --color-terracotta-deep: #8a3d20;
+  --color-clay: #ef9d72;
+  --color-agave: #7a8c4a;
+  --color-agave-deep: #4f6231;
+  --color-pine: #1f3329;
+  --color-pine-soft: #2c4736;
+  --color-ink: #1a1a1a;
+  --color-ink-soft: #4a4a4a;
+  --color-ink-muted: #636363;
+
+  --background: var(--color-sand-soft);
+  --foreground: var(--color-pine);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --color-sand: var(--color-sand);
+  --color-sand-soft: var(--color-sand-soft);
+  --color-sand-deep: var(--color-sand-deep);
+  --color-terracotta: var(--color-terracotta);
+  --color-terracotta-deep: var(--color-terracotta-deep);
+  --color-clay: var(--color-clay);
+  --color-agave: var(--color-agave);
+  --color-agave-deep: var(--color-agave-deep);
+  --color-pine: var(--color-pine);
+  --color-pine-soft: var(--color-pine-soft);
+  --color-ink: var(--color-ink);
+  --color-ink-soft: var(--color-ink-soft);
+  --color-ink-muted: var(--color-ink-muted);
+
+  --font-sans: var(--font-sans-base);
+  --font-serif: var(--font-serif-display);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  /* Native smooth scrolling for in-page anchor links. JS-driven scroll
+     animations (framer-motion) handle the rich stuff; this just makes
+     <a href="#section"> jumps feel polished. */
+  scroll-behavior: smooth;
+  /* Keep the sticky header from covering anchored sections. Roughly the
+     header height plus a little breathing room. */
+  scroll-padding-top: 5rem;
 }
 
+html,
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Default keyboard-focus indicator (WCAG 2.4.7 Focus Visible + 1.4.11
+   Non-text Contrast >= 3:1). Lives in @layer base so component-level
+   focus rings on Input/Button/Select/etc. (Tailwind utilities) win.
+   Catches the rest: plain anchors, <summary>, native inputs, etc.
+   The terracotta outline meets 3:1 against every light surface in
+   the palette (sand-soft, sand, white). For dark surfaces (pine,
+   pine-soft, hero overlay) we layer a sand-soft halo via box-shadow
+   so at least one ring always passes 3:1 against the background. */
+@layer base {
+  :focus-visible {
+    /* `transparent` outline keeps the indicator visible under Windows
+       High-Contrast / forced-colors mode, which strips box-shadows. */
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    box-shadow:
+      0 0 0 2px var(--color-sand-soft),
+      0 0 0 4px var(--color-terracotta);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  /* Honour user OS-level "reduce motion" setting everywhere — overrides
+     framer-motion / CSS transitions so animation never fights accessibility. */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+::selection {
+  background: var(--color-terracotta);
+  color: var(--color-sand-soft);
+}
+
+/* react-day-picker overrides to match palette */
+.rdp {
+  --rdp-cell-size: 40px;
+  --rdp-accent-color: var(--color-terracotta);
+  --rdp-background-color: var(--color-sand);
+  --rdp-accent-color-dark: var(--color-terracotta-deep);
+  --rdp-background-color-dark: var(--color-pine-soft);
+  --rdp-outline: 2px solid var(--color-terracotta);
+  --rdp-outline-selected: 2px solid var(--color-terracotta-deep);
+}
+.rdp-day_selected,
+.rdp-day_selected:focus,
+.rdp-day_selected:hover {
+  background: var(--color-terracotta) !important;
+  color: var(--color-sand-soft);
+  border-radius: 9999px;
+}
+.rdp-day_disabled {
+  text-decoration: line-through;
+  color: var(--color-ink-muted);
+  opacity: 0.55;
+}
+.rdp-day {
+  border-radius: 9999px;
+}
+
+/* small helper for the agave gradient backdrop. RGBA values mirror the
+   --color-agave (122,140,74) and --color-terracotta (168,69,31) tokens. */
+.bg-agave-gradient {
+  background: radial-gradient(
+      80% 60% at 20% 0%,
+      rgba(122, 140, 74, 0.25),
+      transparent 60%
+    ),
+    radial-gradient(60% 60% at 100% 100%, rgba(168, 69, 31, 0.18), transparent 60%),
+    var(--color-sand-soft);
+}
+
+.bg-pine-gradient {
+  background: radial-gradient(
+      80% 60% at 20% 0%,
+      rgba(122, 140, 74, 0.15),
+      transparent 60%
+    ),
+    radial-gradient(60% 60% at 100% 100%, rgba(168, 69, 31, 0.18), transparent 60%),
+    var(--color-pine);
+}
+
+/* Logo gear rotation — spins once clockwise every 5 s with ease-in-out.
+   The spin occupies the first 20 % of the cycle (1 s); the remaining 4 s
+   are a natural pause before the next rotation starts.
+   The `prefers-reduced-motion` block above already suppresses this for
+   users who have opted out of motion. */
+@keyframes gear-spin {
+  0% {
+    transform: rotate(0deg);
+    animation-timing-function: ease-in-out;
+  }
+  20% { transform: rotate(360deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.gear-spin {
+  animation: gear-spin 5s infinite;
+}
+
+.skip-link {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link:focus {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  z-index: 100;
+  width: auto;
+  height: auto;
+  margin: 0;
+  clip: auto;
+  overflow: visible;
+  white-space: normal;
+  padding: 0.65rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: var(--color-pine);
+  color: var(--color-sand-soft);
+  box-shadow: 0 4px 24px -8px rgba(31, 51, 41, 0.45);
 }

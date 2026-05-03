@@ -1,0 +1,122 @@
+// Local dev uses SQLite. To deploy on Vercel + Neon Postgres, change `provider`
+// to "postgresql" and run `prisma migrate deploy`. Schema fields are intentionally
+// portable (no Postgres-only types) so this swap is one line.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Tour {
+  id           String           @id @default(cuid())
+  slug         String           @unique
+  name         String
+  region       String
+  country      String           @default("Mexico")
+  bikeTypes    String           // CSV: "MTB,E-MTB"
+  difficulty   String           // BEGINNER | INTERMEDIATE | ADVANCED
+  durationDays Int
+  basePriceUsd Int
+  heroImage    String
+  gallery      String           // JSON array of image paths/URLs
+  summary      String
+  highlights   String           // JSON array of strings
+  itinerary    String           // JSON array of {day, title, body, distanceKm, ascentM}
+  included     String           // JSON array of strings
+  notIncluded  String           // JSON array of strings
+  maxGroup     Int              @default(8)
+  driveTimeMin Int              // approx drive time from Guadalajara, minutes
+  departures   TourDeparture[]
+  bookings     BookingRequest[]
+  blockedDates BlockedDate[]
+  reviews      Review[]
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+}
+
+model Review {
+  id            String   @id @default(cuid())
+  tourId        String
+  tour          Tour     @relation(fields: [tourId], references: [id], onDelete: Cascade)
+  riderName     String
+  riderLocation String
+  rating        Int
+  quote         String
+  photoUrl      String?
+  source        String?
+  createdAt     DateTime @default(now())
+
+  @@index([tourId])
+}
+
+model TourDeparture {
+  id        String           @id @default(cuid())
+  tourId    String
+  tour      Tour             @relation(fields: [tourId], references: [id], onDelete: Cascade)
+  startDate DateTime
+  endDate   DateTime
+  capacity  Int
+  status    String           @default("OPEN") // OPEN | HOLD | SOLD_OUT
+  bookings  BookingRequest[]
+  createdAt DateTime         @default(now())
+
+  @@index([tourId, startDate])
+}
+
+model BlockedDate {
+  id     String   @id @default(cuid())
+  tourId String?  // null = global block
+  tour   Tour?    @relation(fields: [tourId], references: [id], onDelete: Cascade)
+  date   DateTime
+  reason String?
+}
+
+model Bike {
+  id            String  @id @default(cuid())
+  slug          String  @unique
+  brand         String
+  model         String
+  category      String  // TRAIL | ENDURO | XC | E-MTB | DOWN_COUNTRY
+  travelMm      Int     // rear travel; front noted in `notes`
+  wheelSize     String  // "29" | "MX" | "27.5"
+  drivetrain    String
+  brakes        String
+  suspension    String
+  tires         String
+  sizesAvail    String  // JSON: ["S","M","L","XL"]
+  riderHeightCm String  // e.g. "165-195"
+  dailyRateUsd  Int
+  heroImage     String
+  gallery       String  // JSON array
+  notes         String?
+}
+
+model BookingRequest {
+  id             String        @id @default(cuid())
+  tourId         String
+  departureId    String
+  tour           Tour          @relation(fields: [tourId], references: [id])
+  departure      TourDeparture @relation(fields: [departureId], references: [id])
+  leadName       String
+  email          String
+  phone          String
+  whatsapp       Boolean       @default(false)
+  partySize      Int
+  riders         String        // JSON array of rider details + bike + accessories
+  pickup         String
+  dietary        String?
+  spanishHelp    Boolean       @default(false)
+  emergencyName  String
+  emergencyPhone String
+  hearAbout      String?
+  notes          String?
+  status         String        @default("PENDING") // PENDING | CONFIRMED | DECLINED
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([departureId, status])
+}
