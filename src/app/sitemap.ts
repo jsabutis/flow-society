@@ -1,14 +1,20 @@
 import type { MetadataRoute } from "next";
-import { prisma } from "@/lib/db";
+import { bikes as seedBikes } from "@/lib/data/bikes";
 import { STORIES } from "@/lib/data/stories";
+import { tours as seedTours } from "@/lib/data/tours";
+import { prisma } from "@/lib/db";
+import { isStaticPreviewMode } from "@/lib/static-preview";
 
 const BASE = process.env.SITE_URL ?? "https://flowsociety.mx";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [tours, bikes] = await Promise.all([
-    prisma.tour.findMany({ select: { slug: true, updatedAt: true } }),
-    prisma.bike.findMany({ select: { slug: true } }),
-  ]);
+  const now = new Date();
+  const tours = isStaticPreviewMode()
+    ? seedTours.map((t) => ({ slug: t.slug, updatedAt: now }))
+    : await prisma.tour.findMany({ select: { slug: true, updatedAt: true } });
+  const bikes = isStaticPreviewMode()
+    ? seedBikes.map((b) => ({ slug: b.slug }))
+    : await prisma.bike.findMany({ select: { slug: true } });
 
   const staticRoutes: MetadataRoute.Sitemap = [
     "",

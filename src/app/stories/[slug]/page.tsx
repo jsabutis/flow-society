@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { STORIES, getStory } from "@/lib/data/stories";
 import { prisma } from "@/lib/db";
+import { previewTourSummary } from "@/lib/static-preview-data";
+import { isStaticPreviewMode } from "@/lib/static-preview";
 import { Button } from "@/components/ui/button";
 import { getT } from "@/lib/i18n/server";
 import { SiteBreadcrumbs } from "@/components/site/site-breadcrumbs";
@@ -58,10 +60,12 @@ export default async function StoryPage({
 
   const relatedTour =
     story.relatedTourSlug != null
-      ? await prisma.tour.findUnique({
-          where: { slug: story.relatedTourSlug },
-          select: { slug: true, name: true, region: true },
-        })
+      ? isStaticPreviewMode()
+        ? previewTourSummary(story.relatedTourSlug)
+        : await prisma.tour.findUnique({
+            where: { slug: story.relatedTourSlug },
+            select: { slug: true, name: true, region: true },
+          })
       : null;
 
   const others = STORIES.filter((s) => s.slug !== story.slug)

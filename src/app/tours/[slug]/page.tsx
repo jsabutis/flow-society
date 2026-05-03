@@ -3,6 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
+import { findSeedTourBySlug } from "@/lib/static-preview-data";
+import { isStaticPreviewMode } from "@/lib/static-preview";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AvailabilityCalendarWrapper } from "@/components/site/availability-calendar-wrapper";
@@ -28,7 +30,9 @@ export async function generateMetadata({
   params: Promise<RouteParams>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const tour = await prisma.tour.findUnique({ where: { slug } });
+  const tour = isStaticPreviewMode()
+    ? findSeedTourBySlug(slug)
+    : await prisma.tour.findUnique({ where: { slug } });
   if (!tour) return { title: "Tour" };
   return {
     title: tour.name,
@@ -61,7 +65,9 @@ export default async function TourDetailPage({
   params: Promise<RouteParams>;
 }) {
   const { slug } = await params;
-  const tour = await prisma.tour.findUnique({ where: { slug } });
+  const tour = isStaticPreviewMode()
+    ? findSeedTourBySlug(slug)
+    : await prisma.tour.findUnique({ where: { slug } });
   if (!tour) notFound();
 
   const { locale, t } = await getT();

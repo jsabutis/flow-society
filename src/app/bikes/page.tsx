@@ -1,4 +1,6 @@
 import { prisma } from "@/lib/db";
+import { listSeedBikeCardRows } from "@/lib/static-preview-data";
+import { isStaticPreviewMode } from "@/lib/static-preview";
 import { BikeCard } from "@/components/site/bike-card";
 import type { Metadata } from "next";
 import { getT } from "@/lib/i18n/server";
@@ -13,19 +15,21 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function BikesPage() {
   const { t } = await getT();
-  const bikes = await prisma.bike.findMany({
-    orderBy: [{ category: "asc" }, { brand: "asc" }],
-    select: {
-      slug: true,
-      brand: true,
-      model: true,
-      category: true,
-      travelMm: true,
-      wheelSize: true,
-      dailyRateUsd: true,
-      heroImage: true,
-    },
-  });
+  const bikes = isStaticPreviewMode()
+    ? listSeedBikeCardRows()
+    : await prisma.bike.findMany({
+        orderBy: [{ category: "asc" }, { brand: "asc" }],
+        select: {
+          slug: true,
+          brand: true,
+          model: true,
+          category: true,
+          travelMm: true,
+          wheelSize: true,
+          dailyRateUsd: true,
+          heroImage: true,
+        },
+      });
 
   return (
     <div>

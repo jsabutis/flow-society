@@ -1,5 +1,10 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
+import {
+  listSeedToursFiltered,
+  seedTourToListRow,
+} from "@/lib/static-preview-data";
+import { isStaticPreviewMode } from "@/lib/static-preview";
 import { TourCard } from "@/components/site/tour-card";
 import { Reveal, RevealStagger, RevealItem } from "@/components/site/reveal";
 import type { Metadata } from "next";
@@ -25,24 +30,25 @@ export default async function ToursPage({ searchParams }: Props) {
   const { t } = await getT();
   const sp = await searchParams;
   const filters = parseTourListSearchParams(sp);
-  const where = tourWhereFromFilters(filters);
 
-  const tours = await prisma.tour.findMany({
-    where,
-    orderBy: [{ durationDays: "asc" }, { createdAt: "asc" }],
-    select: {
-      slug: true,
-      name: true,
-      region: true,
-      bikeTypes: true,
-      difficulty: true,
-      durationDays: true,
-      basePriceUsd: true,
-      heroImage: true,
-      summary: true,
-      id: true,
-    },
-  });
+  const tours = isStaticPreviewMode()
+    ? listSeedToursFiltered(filters).map(seedTourToListRow)
+    : await prisma.tour.findMany({
+        where: tourWhereFromFilters(filters),
+        orderBy: [{ durationDays: "asc" }, { createdAt: "asc" }],
+        select: {
+          slug: true,
+          name: true,
+          region: true,
+          bikeTypes: true,
+          difficulty: true,
+          durationDays: true,
+          basePriceUsd: true,
+          heroImage: true,
+          summary: true,
+          id: true,
+        },
+      });
 
   const [cardReviewStats, fillingMap] = await Promise.all([
     getReviewStatsByTourIds(tours.map((tour) => tour.id)),

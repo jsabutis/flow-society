@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db";
+import { isStaticPreviewMode } from "@/lib/static-preview";
 
 export type TourReviewStats = {
   avg: number;
@@ -39,6 +40,7 @@ export async function getTourReviewStats(tourId: string): Promise<TourReviewStat
 }
 
 export async function getTourReviews(tourId: string, take = 8) {
+  if (isStaticPreviewMode()) return [];
   return prisma.review.findMany({
     where: { tourId },
     orderBy: { createdAt: "desc" },
@@ -50,6 +52,7 @@ export async function getTourReviews(tourId: string, take = 8) {
 export async function getReviewStatsByTourIds(
   tourIds: string[],
 ): Promise<Map<string, TourReviewStats>> {
+  if (isStaticPreviewMode()) return new Map();
   if (tourIds.length === 0) return new Map();
   try {
     const rows = await prisma.review.groupBy({

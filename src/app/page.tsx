@@ -1,6 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
+import { tours as seedTours } from "@/lib/data/tours";
 import { prisma } from "@/lib/db";
+import { isStaticPreviewMode } from "@/lib/static-preview";
 import { TourCard } from "@/components/site/tour-card";
 import { CalendarStrip } from "@/components/site/calendar-strip";
 import { DestinationsStrip } from "@/components/site/destinations-strip";
@@ -17,21 +19,33 @@ import { Route, UtensilsCrossed, Users, TreePine, type LucideIcon } from "lucide
 
 export default async function HomePage() {
   const { t } = await getT();
-  const featured = await prisma.tour.findMany({
-    take: 8,
-    orderBy: { createdAt: "asc" },
-    select: {
-      slug: true,
-      name: true,
-      region: true,
-      bikeTypes: true,
-      difficulty: true,
-      durationDays: true,
-      basePriceUsd: true,
-      heroImage: true,
-      id: true,
-    },
-  });
+  const featured = isStaticPreviewMode()
+    ? seedTours.slice(0, 8).map((s) => ({
+        slug: s.slug,
+        name: s.name,
+        region: s.region,
+        bikeTypes: s.bikeTypes,
+        difficulty: s.difficulty,
+        durationDays: s.durationDays,
+        basePriceUsd: s.basePriceUsd,
+        heroImage: s.heroImage,
+        id: `pv-${s.slug}`,
+      }))
+    : await prisma.tour.findMany({
+        take: 8,
+        orderBy: { createdAt: "asc" },
+        select: {
+          slug: true,
+          name: true,
+          region: true,
+          bikeTypes: true,
+          difficulty: true,
+          durationDays: true,
+          basePriceUsd: true,
+          heroImage: true,
+          id: true,
+        },
+      });
 
   const [reviewStats, cardReviewStats, fillingMap] = await Promise.all([
     getGlobalReviewStats(),

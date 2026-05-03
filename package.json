@@ -9,7 +9,7 @@
     "lint": "eslint",
     "db:seed": "tsx prisma/seed.ts",
     "db:reset": "prisma migrate reset --force",
-    "vercel-build": "node scripts/assert-database-url.mjs && prisma generate && prisma migrate deploy && next build"
+    "vercel-build": "node scripts/vercel-build.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

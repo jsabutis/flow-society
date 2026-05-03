@@ -1,6 +1,9 @@
+import type { Tour } from "@prisma/client";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
+import { findSeedTourBySlug } from "@/lib/static-preview-data";
+import { isStaticPreviewMode } from "@/lib/static-preview";
 import { formatUsd } from "@/lib/utils";
 import type { Metadata } from "next";
 import { getT } from "@/lib/i18n/server";
@@ -51,14 +54,16 @@ export default async function ToursComparePage({ searchParams }: RouteParams) {
     );
   }
 
-  const tours = await prisma.tour.findMany({
-    where: { slug: { in: slugList } },
-  });
+  const tours: Tour[] = isStaticPreviewMode()
+    ? slugList.map((s) => findSeedTourBySlug(s)).filter((t): t is Tour => Boolean(t))
+    : await prisma.tour.findMany({
+        where: { slug: { in: slugList } },
+      });
   if (tours.length < 2) notFound();
 
   const ordered = slugList
     .map((s) => tours.find((tour) => tour.slug === s))
-    .filter((tour): tour is (typeof tours)[number] => Boolean(tour));
+    .filter((tour): tour is Tour => Boolean(tour));
 
   return (
     <div className="pb-24">

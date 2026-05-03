@@ -3,6 +3,11 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { ArrowLeft } from "lucide-react";
 import { prisma } from "@/lib/db";
+import {
+  findSeedTourBySlug,
+  listSeedBikesForBookingSelect,
+} from "@/lib/static-preview-data";
+import { isStaticPreviewMode } from "@/lib/static-preview";
 import { getTourAvailability } from "@/lib/availability";
 import { BookingFlow } from "@/components/booking/booking-flow";
 import { getT } from "@/lib/i18n/server";
@@ -26,25 +31,29 @@ export default async function BookPage({
   const { dep } = await searchParams;
   const { t } = await getT();
 
-  const tour = await prisma.tour.findUnique({ where: { slug: tourSlug } });
+  const tour = isStaticPreviewMode()
+    ? findSeedTourBySlug(tourSlug)
+    : await prisma.tour.findUnique({ where: { slug: tourSlug } });
   if (!tour) notFound();
 
   const [departures, bikes] = await Promise.all([
     getTourAvailability(tourSlug),
-    prisma.bike.findMany({
-      orderBy: [{ category: "asc" }, { brand: "asc" }],
-      select: {
-        slug: true,
-        brand: true,
-        model: true,
-        category: true,
-        travelMm: true,
-        wheelSize: true,
-        dailyRateUsd: true,
-        sizesAvail: true,
-        riderHeightCm: true,
-      },
-    }),
+    isStaticPreviewMode()
+      ? Promise.resolve(listSeedBikesForBookingSelect())
+      : prisma.bike.findMany({
+          orderBy: [{ category: "asc" }, { brand: "asc" }],
+          select: {
+            slug: true,
+            brand: true,
+            model: true,
+            category: true,
+            travelMm: true,
+            wheelSize: true,
+            dailyRateUsd: true,
+            sizesAvail: true,
+            riderHeightCm: true,
+          },
+        }),
   ]);
 
   return (

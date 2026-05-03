@@ -1,9 +1,11 @@
 import { prisma } from "@/lib/db";
+import { isStaticPreviewMode } from "@/lib/static-preview";
 import type { DepartureAvailability } from "@/lib/types";
 
 const FILLING_THRESHOLD = 0.6; // 60%+ booked = "filling fast"
 
 export async function getTourAvailability(slug: string): Promise<DepartureAvailability[]> {
+  if (isStaticPreviewMode()) return [];
   const tour = await prisma.tour.findUnique({
     where: { slug },
     include: {
@@ -50,6 +52,7 @@ export async function getTourAvailability(slug: string): Promise<DepartureAvaila
 }
 
 export async function getAllUpcomingDepartures() {
+  if (isStaticPreviewMode()) return [];
   const today = stripTime(new Date());
   const tours = await prisma.tour.findMany({
     include: {

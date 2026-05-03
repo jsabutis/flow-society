@@ -3,6 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
+import { findSeedBikeBySlug } from "@/lib/static-preview-data";
+import { isStaticPreviewMode } from "@/lib/static-preview";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatUsd, parseJson } from "@/lib/utils";
@@ -20,7 +22,9 @@ export async function generateMetadata({
   params: Promise<RouteParams>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const bike = await prisma.bike.findUnique({ where: { slug } });
+  const bike = isStaticPreviewMode()
+    ? findSeedBikeBySlug(slug)
+    : await prisma.bike.findUnique({ where: { slug } });
   if (!bike) return { title: "Bike" };
   return {
     title: `${bike.brand} ${bike.model}`,
@@ -47,7 +51,9 @@ export default async function BikeDetailPage({
   params: Promise<RouteParams>;
 }) {
   const { slug } = await params;
-  const bike = await prisma.bike.findUnique({ where: { slug } });
+  const bike = isStaticPreviewMode()
+    ? findSeedBikeBySlug(slug)
+    : await prisma.bike.findUnique({ where: { slug } });
   if (!bike) notFound();
 
   const { locale, t } = await getT();

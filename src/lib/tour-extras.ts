@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db";
+import { isStaticPreviewMode } from "@/lib/static-preview";
 
 const FILLING_THRESHOLD = 0.6;
 
@@ -15,6 +16,10 @@ export async function getNextDepartureFillingBySlug(
   slugs: string[],
 ): Promise<Map<string, boolean>> {
   const result = new Map<string, boolean>();
+  if (isStaticPreviewMode()) {
+    for (const s of slugs) result.set(s, false);
+    return result;
+  }
   if (slugs.length === 0) return result;
   const today = stripTime(new Date());
 

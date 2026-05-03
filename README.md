@@ -63,7 +63,7 @@ npx tsx scripts/smoke-booking.ts   # End-to-end booking pipeline test
 
 1. Push the repo to GitHub.
 2. In Vercel, import the project. [`vercel.json`](vercel.json) sets the build command to `npm run vercel-build`.
-3. Storage → add **Neon** Postgres (free). Ensure **`DATABASE_URL` is created for Production _and_ Preview** (otherwise the build stops with “Environment variable not found: DATABASE_URL”). The Neon integration usually injects this; if not, paste the connection string under Project → Settings → Environment Variables and enable both environments for builds.
+3. Storage → add **Neon** Postgres (free). Ensure **`DATABASE_URL` exists for Production** (and for Preview if you want real data there). **Preview-only tip:** if `DATABASE_URL` is missing on **Preview** deployments, the build uses bundled seed data instead of the database so you can still review the UI—booking, admin, and calendar stay empty until you add Neon.
 4. Set env vars in Vercel: `ADMIN_TOKEN`, `RESEND_API_KEY` (optional), `RESEND_FROM`, `ADMIN_NOTIFY_EMAIL`, `SITE_URL`.
 5. Deploy. The `vercel-build` script runs `prisma generate && prisma migrate deploy && next build` after checking `DATABASE_URL`.
 6. After first deploy, seed prod: `vercel env pull .env.production` then `DATABASE_URL=... npm run db:seed`.
