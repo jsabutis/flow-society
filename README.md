@@ -15,7 +15,7 @@ E-bike experiences and trail culture in Bosque La Primavera, Jalisco — a marke
 
 - Next.js 15 (App Router) · React 19 · TypeScript
 - Tailwind CSS v4 · shadcn-style UI components · Radix primitives
-- Prisma 6 · SQLite locally / Postgres (Neon free tier) in production
+- Prisma 6 · PostgreSQL (Neon free tier on Vercel; local dev uses the same `DATABASE_URL` pattern)
 - react-day-picker · react-hook-form · zod
 - Resend (email; optional, falls back to console)
 - Framer Motion · Lucide icons
@@ -27,6 +27,7 @@ Total cost at launch: **$0/mo**. No credit card required for any service.
 
 ```bash
 npm install
+# Copy .env.example → .env and set DATABASE_URL to a postgres:// connection string (Neon or local Postgres).
 npx prisma migrate dev
 npm run db:seed
 npm run dev
@@ -41,11 +42,11 @@ The admin dashboard is at `/admin` — sign in with the `ADMIN_TOKEN` from your 
 Copy `.env.example` to `.env`:
 
 ```bash
-DATABASE_URL="file:./dev.db"           # Local SQLite. Swap to Neon Postgres URL in prod.
-ADMIN_TOKEN="changeme-local-dev-token" # Required to access /admin
-RESEND_API_KEY=""                      # Optional. Without it, emails log to console.
+DATABASE_URL="postgresql://USER:PASSWORD@HOST/DB"  # Postgres (Neon or local); required for prisma + the app.
+ADMIN_TOKEN="changeme-local-dev-token"          # Required to access /admin
+RESEND_API_KEY=""                               # Optional. Without it, emails log to console.
 RESEND_FROM="bookings@example.com"
-ADMIN_NOTIFY_EMAIL="you@example.com"   # Where new booking notifications go.
+ADMIN_NOTIFY_EMAIL="you@example.com"            # Where new booking notifications go.
 ```
 
 ## Useful scripts
@@ -54,19 +55,18 @@ ADMIN_NOTIFY_EMAIL="you@example.com"   # Where new booking notifications go.
 npm run dev          # Next dev server (Turbopack)
 npm run build        # Production build
 npm run db:seed      # Re-seed tours / bikes / departures
-npm run db:reset     # Drop + re-create the local SQLite DB
+npm run db:reset     # Drop + re-create the database via Prisma migrate reset (requires DATABASE_URL)
 npx tsx scripts/smoke-booking.ts   # End-to-end booking pipeline test
 ```
 
 ## Deploying to Vercel
 
 1. Push the repo to GitHub.
-2. In Vercel, import the project. (Build command auto-detects from `vercel-build` in `package.json`.)
-3. Storage → add **Neon** Postgres (free). Vercel injects `DATABASE_URL` automatically.
-4. Edit `prisma/schema.prisma`: change `provider = "sqlite"` to `provider = "postgresql"`. (Schema fields are intentionally portable; this is the only change needed.)
-5. Set env vars in Vercel: `ADMIN_TOKEN`, `RESEND_API_KEY` (optional), `RESEND_FROM`, `ADMIN_NOTIFY_EMAIL`, `SITE_URL`.
-6. Deploy. The `vercel-build` script runs `prisma generate && prisma migrate deploy && next build`.
-7. After first deploy, seed prod: `vercel env pull .env.production` then `DATABASE_URL=... npm run db:seed`.
+2. In Vercel, import the project. [`vercel.json`](vercel.json) sets the build command to `npm run vercel-build`.
+3. Storage → add **Neon** Postgres (free). Ensure **`DATABASE_URL` is created for Production _and_ Preview** (otherwise the build stops with “Environment variable not found: DATABASE_URL”). The Neon integration usually injects this; if not, paste the connection string under Project → Settings → Environment Variables and enable both environments for builds.
+4. Set env vars in Vercel: `ADMIN_TOKEN`, `RESEND_API_KEY` (optional), `RESEND_FROM`, `ADMIN_NOTIFY_EMAIL`, `SITE_URL`.
+5. Deploy. The `vercel-build` script runs `prisma generate && prisma migrate deploy && next build` after checking `DATABASE_URL`.
+6. After first deploy, seed prod: `vercel env pull .env.production` then `DATABASE_URL=... npm run db:seed`.
 
 ### Vercel Hobby ToS note
 

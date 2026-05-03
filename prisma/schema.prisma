@@ -1,13 +1,12 @@
-// Local dev uses SQLite. To deploy on Vercel + Neon Postgres, change `provider`
-// to "postgresql" and run `prisma migrate deploy`. Schema fields are intentionally
-// portable (no Postgres-only types) so this swap is one line.
+// PostgreSQL everywhere (Neon on Vercel, Neon or local Postgres for dev).
+// Set DATABASE_URL to a postgresql:// connection string before any Prisma CLI command.
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
