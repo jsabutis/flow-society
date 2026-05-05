@@ -21,7 +21,7 @@ export async function SiteFooter() {
       <div className="mx-auto max-w-7xl px-5 lg:px-8 py-16 grid gap-12 md:grid-cols-5">
         <div className="md:col-span-2">
           <div className="text-[var(--color-sand-soft)]">
-            <Logo />
+            <Logo wordmarkClassName="brightness-0 invert" />
           </div>
           <p className="mt-4 max-w-md text-sm text-[var(--color-sand-soft)]/75 font-sans leading-relaxed">
             {t.footer.tagline}

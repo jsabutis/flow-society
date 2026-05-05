@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, BadgeCheck, CalendarDays, Star, Users } from "lucide-react";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   motion,
   useScroll,
@@ -19,6 +19,21 @@ export type ParallaxHeroProps = {
   reviewCount: number;
 };
 
+const HERO_SLIDES = [
+  {
+    src: "https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=2400&q=80",
+    alt: "Mountain biker carving through a pine forest trail",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1544191696-15693072b5b8?auto=format&fit=crop&w=2400&q=80",
+    alt: "Rider descending a rugged mountain bike trail at sunset",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=2400&q=80",
+    alt: "Group of mountain bikers climbing a scenic mountain pass",
+  },
+];
+
 /**
  * Hero section with a subtle parallax background image and a fade-up
  * intro that softly translates / fades as the user scrolls past it.
@@ -27,10 +42,19 @@ export function ParallaxHero({ reviewAvg, reviewCount }: ParallaxHeroProps) {
   const { t } = useLanguage();
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
+  const [activeSlide, setActiveSlide] = useState(0);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
   });
+
+  useEffect(() => {
+    if (reduce) return;
+    const timer = window.setInterval(() => {
+      setActiveSlide((current) => (current + 1) % HERO_SLIDES.length);
+    }, 6000);
+    return () => window.clearInterval(timer);
+  }, [reduce]);
 
   const imageY = useTransform(
     scrollYProgress,
@@ -71,14 +95,23 @@ export function ParallaxHero({ reviewAvg, reviewCount }: ParallaxHeroProps) {
         style={{ y: imageY, scale: imageScale }}
         className="absolute inset-0 z-0 will-change-transform"
       >
-        <Image
-          src="https://images.unsplash.com/photo-1768424713138-bfb32d04d2d7?auto=format&fit=crop&w=2400&q=80"
-          alt="Mountain biker riding a grassy trail with blue sky and open hills"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center"
-        />
+        {HERO_SLIDES.map((slide, index) => (
+          <motion.div
+            key={slide.src}
+            className="absolute inset-0"
+            animate={{ opacity: index === activeSlide ? 1 : 0 }}
+            transition={{ duration: 1.3, ease: "easeInOut" }}
+          >
+            <Image
+              src={slide.src}
+              alt={slide.alt}
+              fill
+              priority={index === 0}
+              sizes="100vw"
+              className="object-cover object-center"
+            />
+          </motion.div>
+        ))}
       </motion.div>
 
       {/* Left-to-right: deep shadow for text on the left, fades to nothing on the right */}

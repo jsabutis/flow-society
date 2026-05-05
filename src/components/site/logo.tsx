@@ -8,7 +8,13 @@ const wordmark = localFont({
   display: "swap",
 });
 
-export function Logo({ className = "" }: { className?: string }) {
+export function Logo({
+  className = "",
+  wordmarkClassName = "",
+}: {
+  className?: string;
+  wordmarkClassName?: string;
+}) {
   return (
     <Link
       href="/"
@@ -29,7 +35,7 @@ export function Logo({ className = "" }: { className?: string }) {
         <img
           src="/flow_society_vector.svg"
           alt="Flow Society"
-          className="block h-[1em] w-auto"
+          className={`block h-[1em] w-auto ${wordmarkClassName}`}
         />
       </span>
     </Link>
