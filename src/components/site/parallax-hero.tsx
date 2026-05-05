@@ -21,16 +21,19 @@ export type ParallaxHeroProps = {
 
 const HERO_SLIDES = [
   {
-    src: "https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=2400&q=80",
-    alt: "Mountain biker carving through a pine forest trail",
+    src: "https://images.unsplash.com/photo-1633707167669-37bffb6592c9?auto=format&fit=crop&w=3000&q=85",
+    alt: "Mountain biker ripping through a dusty forest berm",
+    objectPosition: "center 45%",
   },
   {
-    src: "https://images.unsplash.com/photo-1544191696-15693072b5b8?auto=format&fit=crop&w=2400&q=80",
-    alt: "Rider descending a rugged mountain bike trail at sunset",
+    src: "https://images.unsplash.com/photo-1745860794887-48bb741fea84?auto=format&fit=crop&w=3000&q=85",
+    alt: "Mountain biker catching air on a sunny alpine trail",
+    objectPosition: "center 40%",
   },
   {
-    src: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=2400&q=80",
-    alt: "Group of mountain bikers climbing a scenic mountain pass",
+    src: "https://images.unsplash.com/photo-1760462167789-d09300401110?auto=format&fit=crop&w=3000&q=85",
+    alt: "Mountain biker descending a narrow forest singletrack trail",
+    objectPosition: "center 50%",
   },
 ];
 
@@ -109,6 +112,7 @@ export function ParallaxHero({ reviewAvg, reviewCount }: ParallaxHeroProps) {
               priority={index === 0}
               sizes="100vw"
               className="object-cover object-center"
+              style={{ objectPosition: slide.objectPosition }}
             />
           </motion.div>
         ))}
