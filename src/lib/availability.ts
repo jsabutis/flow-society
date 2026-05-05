@@ -56,7 +56,18 @@ export async function getTourAvailability(slug: string): Promise<DepartureAvaila
   });
 }
 
-export async function getAllUpcomingDepartures() {
+export async function getAllUpcomingDepartures(): Promise<Array<{
+  tour: {
+    slug: string;
+    name: string;
+    region: string;
+    difficulty: string;
+    bikeTypes: string;
+    durationDays: number;
+    basePriceUsd: number;
+  };
+  departure: DepartureAvailability;
+}>> {
   if (isStaticPreviewMode()) return buildPreviewUpcomingDepartures();
   const today = stripTime(new Date());
   const tours = await prisma.tour.findMany({
