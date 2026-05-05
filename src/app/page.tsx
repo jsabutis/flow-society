@@ -16,6 +16,7 @@ import { NewsletterForm } from "@/components/site/newsletter-form";
 import { getT } from "@/lib/i18n/server";
 import type { Dictionary } from "@/lib/i18n/server";
 import { Route, UtensilsCrossed, Users, TreePine, type LucideIcon } from "lucide-react";
+import founderPhoto from "../../noemi.png";
 
 export default async function HomePage() {
   const { t } = await getT();
@@ -189,7 +190,7 @@ function Founder({ t }: { t: Dictionary }) {
         <Reveal as="div" className="grid md:grid-cols-2 gap-12 items-center">
           <div className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-[var(--color-pine-soft)]">
             <Image
-              src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=900&q=80"
+              src={founderPhoto}
               alt={t.home.founder.name}
               fill
               sizes="(min-width: 768px) 50vw, 100vw"

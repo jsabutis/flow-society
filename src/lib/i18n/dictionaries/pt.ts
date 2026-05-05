@@ -87,7 +87,7 @@ const pt: Dictionary = {
     founder: {
       eyebrow: "A vis\u00E3o",
       role: "Fundadores \u00B7 Flow Society MX",
-      name: "Uma comunidade multidisciplinar em torno do ciclismo.",
+      name: "Noem\u00ED Castillo",
       body1:
         "Flow Society come\u00E7ou com uma ideia simples: uma experi\u00EAncia em e-bike no Bosque La Primavera que se sinta pessoal, curada e conectada. N\u00E3o s\u00F3 uma rota \u2014 um momento, em um grupo pequeno, onde cada detalhe conta.",
       body2:

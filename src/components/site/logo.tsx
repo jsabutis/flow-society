@@ -26,7 +26,11 @@ export function Logo({ className = "" }: { className?: string }) {
       <span
         className={`${wordmark.className} text-xl md:text-2xl leading-none tracking-tight`}
       >
-        Flow Society
+        <img
+          src="/flow_society_vector.svg"
+          alt="Flow Society"
+          className="block h-[1em] w-auto"
+        />
       </span>
     </Link>
   );

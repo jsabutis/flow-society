@@ -83,7 +83,7 @@ const en = {
     founder: {
       eyebrow: "The vision",
       role: "Founders \u00B7 Flow Society MX",
-      name: "A multidisciplinary community around cycling.",
+      name: "Noem\u00ED Castillo",
       body1:
         "Flow Society started with a simple idea: an e-bike experience in Bosque La Primavera that feels personal, curated, and connected. Not just a route \u2014 a moment, in a small group, where every detail counts.",
       body2:
