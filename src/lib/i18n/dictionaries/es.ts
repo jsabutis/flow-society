@@ -65,6 +65,7 @@ const es: Dictionary = {
       title: "Construido alrededor de la rodada, la comida y la comunidad.",
       description:
         "Creamos experiencias de mtb acompa\u00F1ando el buen uso de las pistas y la seguridad de los visitantes. No se trata solo de recorrer una ruta, sino de vivir un momento en un formato cuidado y personalizado.",
+      karinaAirAlt: "Karina saltando en bicicleta de monta\u00F1a por el bosque",
       items: [
         {
           title: "Rutas adaptadas por nivel",
@@ -87,13 +88,23 @@ const es: Dictionary = {
     founder: {
       eyebrow: "La visi\u00F3n",
       role: "Fundadores \u00B7 Flow Society MX",
-      name: "Noem\u00ED Castillo",
-      body1:
-        "Flow Society naci\u00F3 con una idea simple: una experiencia en e-bike en el Bosque La Primavera que se sienta cercana, aut\u00E9ntica y diferente. No solo una ruta \u2014 un momento, en grupo peque\u00F1o, donde cada detalle cuenta.",
-      body2:
-        "De ah\u00ED creci\u00F3 una visi\u00F3n m\u00E1s grande: construir una comunidad multidisciplinaria alrededor del ciclismo, impulsar el uso de la e-bike como herramienta de turismo en los bosques del pa\u00EDs y contribuir al desarrollo y cuidado de los trails que hacen posibles estas experiencias.",
-      quote:
-        "No se trata solo de recorrer una ruta, sino de vivir un momento en un formato cuidado y personalizado.",
+      profiles: [
+        {
+          name: "Noem\u00ED Castillo",
+          body: [
+            "Flow Society naci\u00F3 con una idea simple: una experiencia en e-bike en el Bosque La Primavera que se sienta cercana, aut\u00E9ntica y diferente. No solo una ruta \u2014 un momento, en grupo peque\u00F1o, donde cada detalle cuenta.",
+            "De ah\u00ED creci\u00F3 una visi\u00F3n m\u00E1s grande: construir una comunidad multidisciplinaria alrededor del ciclismo, impulsar el uso de la e-bike como herramienta de turismo en los bosques del pa\u00EDs y contribuir al desarrollo y cuidado de los trails que hacen posibles estas experiencias.",
+          ],
+          quote:
+            "No se trata solo de recorrer una ruta, sino de vivir un momento en un formato cuidado y personalizado.",
+        },
+        {
+          name: "Karina",
+          body: [
+            "Karina is the embodiment of Flow Society\u2014a mountain biker with over 15 years of experience who has spent much of her life immersed in the forest, riding nearly every day. This deep connection to nature has shaped her into a highly skilled, intuitive rider, moving with precision and effortless flow across any terrain. Her approach goes beyond performance; it reflects a lifestyle rooted in consistency, presence, and a natural rhythm that defines both her riding and the spirit of Flow Society.",
+          ],
+        },
+      ],
     },
     stories: {
       eyebrow: "Diario de campo",

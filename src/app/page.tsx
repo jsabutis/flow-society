@@ -17,6 +17,8 @@ import { getT } from "@/lib/i18n/server";
 import type { Dictionary } from "@/lib/i18n/server";
 import { Route, UtensilsCrossed, Users, TreePine, type LucideIcon } from "lucide-react";
 import founderPhoto from "../../noemi.png";
+import karinaPhoto from "../../karina.png";
+import karinaAirPhoto from "../../karina_air.png";
 
 export default async function HomePage() {
   const { t } = await getT();
@@ -140,6 +142,19 @@ export default async function HomePage() {
 
 const WHY_US_ICONS: LucideIcon[] = [Route, UtensilsCrossed, Users, TreePine];
 
+const FOUNDER_PHOTOS = [
+  {
+    src: founderPhoto,
+    aspectClassName: "aspect-[4/5]",
+    imageClassName: "object-cover object-top",
+  },
+  {
+    src: karinaPhoto,
+    aspectClassName: "aspect-[1066/1421]",
+    imageClassName: "object-cover",
+  },
+];
+
 function WhyUs({ t }: { t: Dictionary }) {
   return (
     <section className="py-24">
@@ -154,6 +169,15 @@ function WhyUs({ t }: { t: Dictionary }) {
           <p className="mt-5 text-[var(--color-ink-soft)] leading-relaxed">
             {t.home.whyUs.description}
           </p>
+          <div className="relative mt-8 aspect-[1066/1421] max-w-sm overflow-hidden rounded-2xl bg-[var(--color-pine-soft)]">
+            <Image
+              src={karinaAirPhoto}
+              alt={t.home.whyUs.karinaAirAlt}
+              fill
+              sizes="(min-width: 768px) 33vw, 100vw"
+              className="object-cover"
+            />
+          </div>
         </Reveal>
         <RevealStagger
           stagger={0.12}
@@ -186,38 +210,53 @@ function WhyUs({ t }: { t: Dictionary }) {
 function Founder({ t }: { t: Dictionary }) {
   return (
     <section className="py-24 bg-[var(--color-pine)] text-[var(--color-sand-soft)]">
-      <div className="mx-auto max-w-7xl px-5 lg:px-8">
-        <Reveal as="div" className="grid md:grid-cols-2 gap-12 items-center">
-          <div className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-[var(--color-pine-soft)]">
-            <Image
-              src={founderPhoto}
-              alt={t.home.founder.name}
-              fill
-              sizes="(min-width: 768px) 50vw, 100vw"
-              className="object-cover object-top"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-pine)]/60 to-transparent" />
-            <p className="absolute bottom-5 left-6 text-xs uppercase tracking-[0.2em] text-[var(--color-clay)]">
-              {t.home.founder.role}
-            </p>
-          </div>
+      <div className="mx-auto max-w-7xl px-5 lg:px-8 space-y-20">
+        {t.home.founder.profiles.map((founder, index) => {
+          const photo = FOUNDER_PHOTOS[index];
 
-          <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-[var(--color-clay)]">
-              {t.home.founder.eyebrow}
-            </p>
-            <h2 className="font-serif text-4xl md:text-5xl mt-3 leading-tight">
-              {t.home.founder.name}
-            </h2>
-            <div className="mt-6 space-y-4 text-[var(--color-sand-soft)]/80 leading-relaxed">
-              <p>{t.home.founder.body1}</p>
-              <p>{t.home.founder.body2}</p>
-            </div>
-            <blockquote className="mt-8 border-l-2 border-[var(--color-clay)] pl-5 italic text-[var(--color-sand-soft)]/70">
-              &ldquo;{t.home.founder.quote}&rdquo;
-            </blockquote>
-          </div>
-        </Reveal>
+          return (
+            <Reveal
+              key={founder.name}
+              as="div"
+              className="grid md:grid-cols-2 gap-12 items-center"
+            >
+              <div
+                className={`relative ${photo.aspectClassName} rounded-2xl overflow-hidden bg-[var(--color-pine-soft)]`}
+              >
+                <Image
+                  src={photo.src}
+                  alt={founder.name}
+                  fill
+                  sizes="(min-width: 768px) 50vw, 100vw"
+                  className={photo.imageClassName}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-pine)]/60 to-transparent" />
+                <p className="absolute bottom-5 left-6 text-xs uppercase tracking-[0.2em] text-[var(--color-clay)]">
+                  {t.home.founder.role}
+                </p>
+              </div>
+
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-[var(--color-clay)]">
+                  {t.home.founder.eyebrow}
+                </p>
+                <h2 className="font-serif text-4xl md:text-5xl mt-3 leading-tight">
+                  {founder.name}
+                </h2>
+                <div className="mt-6 space-y-4 text-[var(--color-sand-soft)]/80 leading-relaxed">
+                  {founder.body.map((paragraph) => (
+                    <p key={paragraph}>{paragraph}</p>
+                  ))}
+                </div>
+                {founder.quote && (
+                  <blockquote className="mt-8 border-l-2 border-[var(--color-clay)] pl-5 italic text-[var(--color-sand-soft)]/70">
+                    &ldquo;{founder.quote}&rdquo;
+                  </blockquote>
+                )}
+              </div>
+            </Reveal>
+          );
+        })}
       </div>
     </section>
   );

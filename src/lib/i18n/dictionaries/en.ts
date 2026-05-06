@@ -61,6 +61,7 @@ const en = {
       title: "Built around the ride, the food, and the comunidad.",
       description:
         "Flow Society was born to share La Primavera the way locals live it \u2014 a curated experience where the route, the brunch, the snacks, and the energy of the group all matter equally. Premium without losing the soul.",
+      karinaAirAlt: "Karina jumping a mountain bike through the forest",
       items: [
         {
           title: "Level-adapted routes",
@@ -83,13 +84,23 @@ const en = {
     founder: {
       eyebrow: "The vision",
       role: "Founders \u00B7 Flow Society MX",
-      name: "Noem\u00ED Castillo",
-      body1:
-        "Flow Society started with a simple idea: an e-bike experience in Bosque La Primavera that feels personal, curated, and connected. Not just a route \u2014 a moment, in a small group, where every detail counts.",
-      body2:
-        "From there it grew into a bigger vision: a multidisciplinary community around cycling, the e-bike as a tool for forest tourism in M\u00E9xico, and ongoing contribution to the trails that make these experiences possible.",
-      quote:
-        "It\u2019s not just about riding the trail \u2014 it\u2019s about living a moment in a format that has been carefully considered.",
+      profiles: [
+        {
+          name: "Noem\u00ED Castillo",
+          body: [
+            "Flow Society started with a simple idea: an e-bike experience in Bosque La Primavera that feels personal, curated, and connected. Not just a route \u2014 a moment, in a small group, where every detail counts.",
+            "From there it grew into a bigger vision: a multidisciplinary community around cycling, the e-bike as a tool for forest tourism in M\u00E9xico, and ongoing contribution to the trails that make these experiences possible.",
+          ],
+          quote:
+            "It\u2019s not just about riding the trail \u2014 it\u2019s about living a moment in a format that has been carefully considered.",
+        },
+        {
+          name: "Karina",
+          body: [
+            "Karina is the embodiment of Flow Society\u2014a mountain biker with over 15 years of experience who has spent much of her life immersed in the forest, riding nearly every day. This deep connection to nature has shaped her into a highly skilled, intuitive rider, moving with precision and effortless flow across any terrain. Her approach goes beyond performance; it reflects a lifestyle rooted in consistency, presence, and a natural rhythm that defines both her riding and the spirit of Flow Society.",
+          ],
+        },
+      ],
     },
     stories: {
       eyebrow: "Field journal",

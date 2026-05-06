@@ -65,6 +65,7 @@ const de: Dictionary = {
       title: "Gebaut um die Fahrt, das Essen und die Comunidad.",
       description:
         "Flow Society wurde gegr\u00FCndet, um La Primavera so zu teilen, wie Locals sie leben \u2014 ein kuratiertes Erlebnis, in dem Route, Brunch, Snacks und die Energie der Gruppe gleicherma\u00DFen z\u00E4hlen. Premium, ohne die Seele zu verlieren.",
+      karinaAirAlt: "Karina springt mit dem Mountainbike durch den Wald",
       items: [
         {
           title: "Level-angepasste Routen",
@@ -87,13 +88,23 @@ const de: Dictionary = {
     founder: {
       eyebrow: "Die Vision",
       role: "Gr\u00FCnder \u00B7 Flow Society MX",
-      name: "Noem\u00ED Castillo",
-      body1:
-        "Flow Society begann mit einer einfachen Idee: ein Mountainbike-Erlebnis im Bosque La Primavera, das pers\u00F6nlich, kuratiert und verbunden wirkt. Nicht nur eine Route \u2014 ein Moment, in einer kleinen Gruppe, in dem jedes Detail z\u00E4hlt.",
-      body2:
-        "Daraus wuchs eine gr\u00F6\u00DFere Vision: eine multidisziplin\u00E4re Community rund ums Radfahren, Wald-Tourismus in Mexiko und ein laufender Beitrag zu den Trails, die diese Erlebnisse erm\u00F6glichen.",
-      quote:
-        "Es geht nicht nur darum, die Strecke zu fahren \u2014 es geht darum, einen Moment in einem sorgf\u00E4ltig durchdachten Format zu leben.",
+      profiles: [
+        {
+          name: "Noem\u00ED Castillo",
+          body: [
+            "Flow Society begann mit einer einfachen Idee: ein Mountainbike-Erlebnis im Bosque La Primavera, das pers\u00F6nlich, kuratiert und verbunden wirkt. Nicht nur eine Route \u2014 ein Moment, in einer kleinen Gruppe, in dem jedes Detail z\u00E4hlt.",
+            "Daraus wuchs eine gr\u00F6\u00DFere Vision: eine multidisziplin\u00E4re Community rund ums Radfahren, Wald-Tourismus in Mexiko und ein laufender Beitrag zu den Trails, die diese Erlebnisse erm\u00F6glichen.",
+          ],
+          quote:
+            "Es geht nicht nur darum, die Strecke zu fahren \u2014 es geht darum, einen Moment in einem sorgf\u00E4ltig durchdachten Format zu leben.",
+        },
+        {
+          name: "Karina",
+          body: [
+            "Karina is the embodiment of Flow Society\u2014a mountain biker with over 15 years of experience who has spent much of her life immersed in the forest, riding nearly every day. This deep connection to nature has shaped her into a highly skilled, intuitive rider, moving with precision and effortless flow across any terrain. Her approach goes beyond performance; it reflects a lifestyle rooted in consistency, presence, and a natural rhythm that defines both her riding and the spirit of Flow Society.",
+          ],
+        },
+      ],
     },
     stories: {
       eyebrow: "Feldjournal",
